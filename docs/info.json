@@ -1,0 +1,11 @@
+{
+  "title": "Fractal",
+  "year": 2023,
+  "description": [
+    "フラクタルを題材にしたワンボタンゲームです。"
+  ],
+  "screen": {
+    "width": 640,
+    "height": 480
+  }
+}
