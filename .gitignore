@@ -1,0 +1,5 @@
+*.exe
+*.wasm
+*.gz
+resources/**/*.dat
+resources/secret
