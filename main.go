@@ -271,8 +271,8 @@ func (g *Game) Update() error {
 			}
 			coin := &Coin{
 				Vector3D: &mathutil.Vector3D{
-					X: p.X + g.random.NormFloat64()*5,
-					Y: p.Y + g.random.NormFloat64()*5,
+					X: p.X,
+					Y: p.Y,
 					Z: 0.000001,
 				},
 				vr: 0,
@@ -318,7 +318,7 @@ func (g *Game) Update() error {
 			g.player.Vector2D.Y = screenHeight
 		}
 
-		g.player.life -= 0.05
+		g.player.life -= 0.2
 
 		if g.ticksFromAllPointsOut == 0 {
 			g.points = lo.Map(g.points, func(p *mathutil.Vector2D, i int) *mathutil.Vector2D {
@@ -484,7 +484,29 @@ func (g *Game) drawScore(screen *ebiten.Image) {
 }
 
 func (g *Game) drawLife(screen *ebiten.Image) {
-	ebitenutil.DrawRect(screen, 150, 12, 350*g.player.life/100, 10, color.White)
+	var path vector.Path
+
+	const r = 40.0
+
+	path.MoveTo(float32(g.player.X), float32(g.player.Y-r))
+	path.Arc(float32(g.player.X), float32(g.player.Y), float32(r), -math.Pi/2, float32(-math.Pi/2+2*math.Pi*g.player.life/100), vector.Clockwise)
+
+	op := &vector.StrokeOptions{}
+	op.Width = 5
+	op.LineJoin = vector.LineJoinRound
+	vs, is := path.AppendVerticesAndIndicesForStroke(nil, nil, op)
+
+	for i := range vs {
+		vs[i].SrcX = 1
+		vs[i].SrcY = 1
+		vs[i].ColorR = 1
+		vs[i].ColorG = 1
+		vs[i].ColorB = 1
+		vs[i].ColorA = 0.5
+	}
+
+	opts := &ebiten.DrawTrianglesOptions{}
+	screen.DrawTriangles(vs, is, emptySubImage, opts)
 }
 
 func (g *Game) drawGameOverText(screen *ebiten.Image) {
